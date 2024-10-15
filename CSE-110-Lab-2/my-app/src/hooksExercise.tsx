@@ -10,17 +10,54 @@ function ToggleTheme() {
       setCurrentTheme(currentTheme === themes.light ? themes.dark : themes.light);
     };
    
+    const theme = useContext(ThemeContext);
+    useEffect(() => {
+        document.body.style.background = currentTheme.background;
+        document.body.style.color = currentTheme.foreground;
+        var notes = document.getElementsByClassName("notes-grid");
+        for (var i = 0; i < notes.length; i++) {
+            let element = notes[i] as HTMLElement;
+            element.style.color = currentTheme.foreground;
+            element.style.background = currentTheme.background;
+
+        }
+
+    });
+
     return (
       <ThemeContext.Provider value={currentTheme}>
         <button onClick={toggleTheme}> Toggle Theme </button>
-        <ClickCounter />
       </ThemeContext.Provider>
     );
    }
    
    export default ToggleTheme;
    
+//    function ChangeBackground() {
+  
+//     const theme = useContext(ThemeContext);
+//     useEffect(() => {
+//         document.body.style.background = theme.background;
+//         document.body.style.color = theme.foreground;
+//         var notes = document.getElementsByClassName("notes-grid");
+//         for (var i = 0; i < notes.length; i++) {
+//             let element = notes[i] as HTMLElement;
+//             element.style.color = currentTheme.background;
+//             element.style.background = theme.background;
+
+//         }
+
+//     });
+
+//     return (<div></div>);
+    
+// }
+
+
    
+
+
+
 
 export function ClickCounter() {
     const [count, setCount] = useState(0);
