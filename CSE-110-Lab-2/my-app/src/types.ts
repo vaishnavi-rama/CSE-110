@@ -10,4 +10,5 @@ export enum Label {
     title: string;
     content: string;
     label: Label;
+    favorite: boolean;
  };

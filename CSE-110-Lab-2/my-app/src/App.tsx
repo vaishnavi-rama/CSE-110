@@ -4,9 +4,9 @@ import './App.css';
 import { Label, Note } from "./types"; // Import the Label type from the appropriate module
 import { dummyNotesList } from "./constants";
 import { useState, useEffect } from 'react';
-import { CiHeart } from "react-icons/ci";
 import { ThemeContext, themes } from "./themeContext";
 import ToggleTheme from './hooksExercise';
+import { useContext } from 'react';
 
 function App() {
 
@@ -16,6 +16,7 @@ function App() {
     title: "",
     content: "",
     label: Label.other,
+    favorite: false
   };
   const [createNote, setCreateNote] = useState(initialNote);
 
@@ -44,13 +45,20 @@ function App() {
     console.log("title: ", noteToLike.title);
     console.log("content: ", noteToLike.content);
     // if its in list remove, if not add 
-    if (likedNotes.includes(noteToLike)) {
-      likedNotes = likedNotes.filter(note => note != noteToLike);
-    }
-    else {
-      likedNotes.push(noteToLike)
-    }
-    // console.log(likedNotes)
+    // if (likedNotes.includes(noteToLike)) {
+    //   likedNotes = likedNotes.filter(note => note != noteToLike);
+    // }
+    // else {
+    //   likedNotes.push(noteToLike)
+    // }
+    //  console.log("likedNotes",likedNotes)
+    const updatedNote: Note = noteToLike
+    updatedNote.favorite = !noteToLike.favorite
+
+    const updatedNoteList = notes.map((note) => 
+    note.id === updatedNote.id ? updatedNote : note);
+    setNotes(updatedNoteList)
+
   }
 
   const [deleteNote, setDeleteNote] = useState<Note>(initialNote);
@@ -63,7 +71,20 @@ function App() {
     setDeleteNote(initialNote);
   }
 
+
+  useEffect(() => {
+    setNotes(notes)
+  }, [likedNotes]);
+
+
+  const [currentTheme, setCurrentTheme] = useState(themes.light);
+   
+    const toggleTheme = () => {
+      setCurrentTheme(currentTheme === themes.light ? themes.dark : themes.light);
+    };
+    
   return (
+    <ThemeContext.Provider value={currentTheme}>
     <div className='app-container'>
       <form className="note-form" onSubmit={createNoteHandler}>
         <div>
@@ -95,10 +116,6 @@ function App() {
           </select>
         </div>
         <div><button type="submit">Create Note</button></div>
-
-        <div>
-          <ToggleTheme />
-        </div>
       </form>
       {/* <div>{likedNotes.map((note) => (
         <div
@@ -111,13 +128,14 @@ function App() {
 
 
       <div className="notes-grid">
-        {notes.map((note) => (
+        {notes.map((note: Note) => (
           <div
             key={note.id}
             className="note-item"
           >
             <div className="notes-header">
-              <button onClick={() => likedNoteHandler(note)}><CiHeart /></button>
+              {/* <button onClick={() => likedNoteHandler(note)}><CiHeart /></button> */}
+              <button onClick={() => likedNoteHandler(note)}>{note.favorite ? "❤️" : "🤍"}</button>
               <button onClick={() => deleteNoteHandler(note)}>x</button>
             </div>
             <h2 contentEditable="true" onChange={editNoteHandler}> {note.title} </h2>
@@ -126,7 +144,17 @@ function App() {
           </div>
         ))}
       </div>
-    </div>);
+        {/* <div> */}
+        
+        {/* </div> */}
+      <div>
+        {/* {notes.map((note) => (note.favorite ? ))} */}
+        <h3>List of favorites</h3>
+        {notes.map((note)=> (note.favorite ? <div>{note.title}</div> :  <div></div>))}
+      </div>
+      <div><ToggleTheme /></div>
+
+    </div> </ThemeContext.Provider>);
 }
 
 export default App;
